@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Filter</title>
+
+    <script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        var viz;
+
+        function initViz() {
+            var containerDiv = document.getElementById("vizContainer"),
+                url = "https://public.tableau.com/views/Superstore-FilterDemo/Overview",
+                options = {
+                    "Region": "Central",
+                    hideTabs: true
+                };
+
+            viz = new tableau.Viz(containerDiv, url, options);
+
+            var containerDiv2 = document.getElementById("vizContainer2"),
+                url = "https://public.tableau.com/views/Superstore-FilterDemo/Overview",
+                options = {
+                    "Region": "Central",
+                    hideTabs: true
+                };
+
+            viz2 = new tableau.Viz(containerDiv2, url, options);
+        }
+
+        function regionFilter(region) {
+
+            var sheet = viz.getWorkbook().getActiveSheet().getWorksheets().get("Sale Map");
+            if (region === "") {
+                sheet.clearFilterAsync("Region");
+            } else {
+
+              var regions = $("#changeregion").val();
+
+              sheet.applyFilterAsync("Region", regions, tableau.FilterUpdateType.REPLACE);
+            }
+        }
+    </script>
+</head>
+
+<body onload="initViz();">
+  <h2>Simulated Admin Perspective - Filtering Allowed</h2>
+  <p>This perspective would give the user an HTML Dropdown element populated available filter values for the given dashboard view. In this example it is sales region. This dropdown controls the Region Filter on the dashboard (floated off the dashboard's viewable area with a negative x coordinate, but still accessible via the Tableau JS API).</p>
+    <div id="controls" style="padding:20px;">
+        Region (Select one or more Values by holding down your control key): <select multiple id="changeregion" onchange="regionFilter(value);">
+            <option value="">All</option>
+            <option value="Central" selected>Central</option>
+            <option value="East">East</option>
+            <option value="West">West</option>
+            <option value="South">South</option>
+        </select>
+    </div>
+    <div id="vizContainer" style="width:800px; height:700px;"></div>
+    <br/>
+    <hr/>
+    <br/>
+    <h2>Simulation Client Perspective</h2>
+    <p>This perspective for clients that would not give the user the ability to change the region. In this case we are prefiltering the view down to just the Central Region and only allowing the user to view this region in the dashboard since the Region Filter set to 'Central'. This filtering is done when the request to load the dashboard is made and references the Region Filter on the dashboard that is floated off the viewable area in negative x space.</p>
+
+    <div id="vizContainer2" style="width:800px; height:700px;"></div>
+    <p>
+<a href="https://public.tableau.com/views/Superstore-FilterDemo/Overview?:embed=y&:display_count=yes&publish=yes">Link to download the Workbook Published to Tableau Public for Demonstration</a>
+<br/>
+<a href="https://github.com/tableau/js-api-samples/blob/master/filter.html">Link to the Tableau Javascript API that enables this functionality</a>
+</p>
+</body>
+
+</html>
